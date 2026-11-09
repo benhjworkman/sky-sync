@@ -10,12 +10,6 @@ def is_in_group(user, group_name):
         return False
     return user.groups.filter(name=group_name).exists()
 
-@register.filter(name='is_travi')
-def is_travi(user):
-    if user.first_name == "Travi":
-        return True
-    return False
-
 @register.filter(name='calculate_distance')
 def calcDistance(x1, x2, y1, y2):
     x1 = x1 * (math.pi / 180)

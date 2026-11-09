@@ -41,13 +41,6 @@
               <a class="nav-link" href="{% url 'admin:index' %}">Admin Page <span class="visually-hidden">(current)</span></a>
             </li>
           {% endif %}
-
-          {% if user|is_travi %}
-            <li class="nav-item active">
-              <a class="nav-link" href="{% url 'dagoodlookingone'%}">DAGOODLOOKINGONE <span class="visually-hidden">(current)</span></a>
-            </li>
-          {% endif %}
-
         {% endif %}
       </ul>
 

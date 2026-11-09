@@ -1,8 +1,11 @@
+from skysync import settings
 from .models import *
 from .forms import *
 from django.core.mail import send_mail
 from django.contrib import messages
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.views.decorators.http import require_POST
 from .models import Booking, Airline, Invoice
 from .forms import create_booking_form
 
@@ -111,7 +114,7 @@ def edit_booking(request, booking_id):
                     send_mail(
                         email_subject,
                         email_body,
-                        'SkySyncContacter@gmail.com',
+                        settings.DEFAULT_FROM_EMAIL,
                         customer_emails,
                         fail_silently=True
                     )
@@ -147,7 +150,7 @@ def registration_email(request):
                f"If any of this information is incorrect, or there is something that you need to change, "
                f"please either contact an admin via a ticket or change it through your profile.\n\n"
                f"We hope you enjoy your stay on SkySync!")
-    from_email = "SkySyncContacter@gmail.com"
+    from_email = settings.DEFAULT_FROM_EMAIL
     recipient_list = [user_email]
 
     send_mail(subject, message, from_email, recipient_list)
@@ -336,7 +339,7 @@ def edit_user_profile(request):
 
     return render(request, 'profiles/edit_user_profile.html', {'form': form})
 
-
+@login_required
 def view_booking_customers(request, booking_id):
     booking_id = booking_id
     bookings = get_object_or_404(Booking, bookingID=booking_id)
@@ -376,7 +379,6 @@ def remove_customer(request, booking_id, user_id):
 
                     invoice.delete()
 
-                print(f"Deleted invoices for booking {booking_id}, customer {user_id}")
             else:
                 print(f"No invoices found for booking {booking_id}, customer {user_id}")
 
@@ -392,7 +394,7 @@ def remove_customer(request, booking_id, user_id):
                 f"If you have any concerns, please contact support and open a ticket.\n\n"
                 f"Best regards,\nSkySync Support Team"
             )
-            send_mail(subject, message, 'SkySyncContacter@gmail.com', [user.email])
+            send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [user.email])
 
             messages.success(request, f"Customer {user.first_name} {user.last_name} has been removed successfully.")
             return redirect('view_booking_customers', booking_id)
@@ -425,7 +427,7 @@ def submit_a_ticket(request):
         form = create_a_ticket_form()
     return render(request, "Ticket System/create_a_ticket.html", {'form': form})
 
-
+@user_passes_test(lambda u: u.is_staff)
 def view_tickets(request):
     all_tickets = Ticket.objects.all()
     form = Tickets_filter_form(request.GET or None)
@@ -439,7 +441,8 @@ def view_tickets(request):
 
     return render(request, 'Ticket System/view_tickets.html', {'all_tickets': all_tickets, 'form': form})
 
-
+@user_passes_test(lambda u: u.is_staff)
+@require_POST
 def mark_ticket_as_fixed(request, ticket_id):
     ticket = get_object_or_404(Ticket, id=ticket_id)
     ticket.successfully_fixed = True
@@ -462,7 +465,7 @@ def mark_ticket_as_fixed(request, ticket_id):
     )
 
     subject = (f"TICKET COMPLETED | ID:{ticket.id}")
-    send_mail(subject, message, 'SkySyncContacter@gmail.com', [ticket_customer_email])
+    send_mail(subject, message, settings.DEFAULT_FROM_EMAIL, [ticket_customer_email])
     messages.success(request, f"You have successfully completed ticket: ID {ticket.id} | Title: {ticket_title}")
     return redirect('view_tickets')
 
@@ -592,16 +595,14 @@ def delete_booking(request, booking_id):
 
     if related_booking.exists():
         related_booking.delete()
-        print(f"Deleted booking with ID: {booking_id}")
         messages.success(request, f"The booking with ID: {booking_id} has been succesfully deleted!")
         return redirect('view_your_bookings')
     else:
-        print(f"No Bookings found with ID: {booking_id}, if this is in error please contact an admin")
         messages.error(request, f"No Bookings found with ID: {booking_id}, if this is in error please contact an admin")
 
-
+@login_required
+@require_POST
 def set_customer_as_paid(request, booking_id, user_id):
-    print(user_id, booking_id)
     customer = get_object_or_404(Customer, user_id=user_id)
     related_invoice = get_object_or_404(Invoice, customerID=customer, bookingID=booking_id)
     related_invoice.has_paid = True
