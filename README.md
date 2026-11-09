@@ -1,7 +1,7 @@
 # SkySync
 
 A flight booking web application built with Django, where airlines publish
-flights and customers book seats. [Solo project]
+flights and customers book seats. Solo Project
 
 ## Features
 
@@ -24,7 +24,7 @@ Python 3.12+, Django, SQLite, HTML/CSS, Bootstrap, JavaScript
 
 ```bash
 git clone https://github.com/benhjworkman/sky-sync.git
-cd skysync
+cd sky-sync
 python3 -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
