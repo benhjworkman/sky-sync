@@ -9,7 +9,7 @@ from django.core.management.base import BaseCommand
 from django.core.mail import send_mail
 from django.utils.timezone import now
 from datetime import timedelta
-
+from skysync import settings
 
 class Command(BaseCommand):
     def handle(self, *args, **kwargs):
@@ -40,7 +40,7 @@ class Command(BaseCommand):
                         f"The flight is at {flight_time} and you are travelling from {booking.start_location_id.location_name} to {booking.end_location_id.location_name} \n\n"
                         f"If you would like to know more about this flight, please check the booking via your user profile on the site \n\n"
                         f"If this email was sent in error, or this booking is a mistake, please contact a SkySync admin via the ticket page.",
-                from_email="SkySyncContacter@gmail.com",
+                from_email=settings.DEFAULT_FROM_EMAIL,
                 recipient_list=recipients_list,
                 fail_silently=False
             )

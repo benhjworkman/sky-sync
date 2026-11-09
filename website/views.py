@@ -603,6 +603,17 @@ def delete_booking(request, booking_id):
 @login_required
 @require_POST
 def set_customer_as_paid(request, booking_id, user_id):
+    # Ownership validation
+    booking = get_object_or_404(Booking, bookingID=booking_id)
+    current_user = request.user
+    if not current_user.groups.filter(name="Airlines").exists():
+        messages.error(request, "You do not have access to this page!")
+        return redirect('home')
+    
+    airline = Airline.objects.get(user=current_user)
+    if booking.userCreatorID.id != airline.id:
+        messages.success(request, 'You are not allowed to edit this booking as you are not the creator')
+        return redirect('home')
     customer = get_object_or_404(Customer, user_id=user_id)
     related_invoice = get_object_or_404(Invoice, customerID=customer, bookingID=booking_id)
     related_invoice.has_paid = True

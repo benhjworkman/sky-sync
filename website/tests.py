@@ -191,3 +191,15 @@ class SkySyncTests(TestCase):
         )
 
         self.assertEqual(self.booking.economy_booked, 100)
+
+    def test_non_owner_cannot_mark_invoice_paid(self):
+        invoice = Invoice.objects.create(customerID=self.customer, bookingID=self.booking,
+                                        economy_seats_booked=1)
+        self.client.force_login(self.user)   # a customer, not the booking's airline
+        self.client.post(f'/booking/set_customer_as_paid/{self.booking.bookingID}/{self.user.id}')
+        invoice.refresh_from_db()
+        self.assertFalse(invoice.has_paid)
+
+    def test_non_staff_cannot_view_tickets(self):
+        self.client.force_login(self.user)
+        self.assertEqual(self.client.get('/view_tickets').status_code, 302)

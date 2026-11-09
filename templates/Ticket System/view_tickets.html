@@ -47,7 +47,12 @@
                     <strong>Description:</strong> {{ ticket.ticket_description }}
                 </p>
                 {% if not ticket.successfully_fixed %}
-                    <a href="{% url 'mark_ticket_as_fixed' ticket.id %}" class="btn btn-success">Mark as Completed</a>
+                            <td>
+                                <form method="post" action="{% url 'set_customer_as_paid' booking.bookingID customers.user.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-primary">Set Customer As Paid</button>
+                                </form>
+                            </td>
                 {% else %}
                     <span class="badge bg-success">Completed</span>
                 {% endif %}

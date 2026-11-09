@@ -31,7 +31,14 @@
         <td>{{ customers.amount_of_bookings }}</td>
         <td><a href="{% url 'user_profile' customers.user.id %}" class="btn btn-info">See User Profile</td>
         <td><a href="{% url 'remove_customer' booking.bookingID customers.user_id %}" class="btn btn-danger">Remove Customer</a></td>
-        <td><a href="{% url 'set_customer_as_paid' booking.bookingID customers.user.id %}" class="btn btn-primary">Set Customer As Paid</a></td>
+
+        <td>
+          <form method="post" action="{% url 'set_customer_as_paid' booking.bookingID customers.user.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-primary">Set Customer As Paid</button>
+          </form>
+        </td>
+        
     </tr>
     {% endfor %}
 
