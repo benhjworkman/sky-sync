@@ -1,8 +1,7 @@
 # SkySync
 
 A flight booking web application built with Django, where airlines publish
-flights and customers book seats. [Solo project / individual coursework, built
-in YEAR.]
+flights and customers book seats. [Solo project]
 
 ## Features
 
@@ -65,7 +64,6 @@ Secrets are read from environment variables and are not stored in the repo:
 - Add automated tests for the booking and payment logic
 - Move from SQLite to PostgreSQL
 - Add real payment processing
-- [Anything else you'd genuinely change]
 
 ## Author
 Benjamin Workman
