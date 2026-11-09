@@ -1,0 +1,128 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+
+{% if user.is_authenticated %}
+
+    <h1> Profile of {{ user.first_name }} {{ user.last_name }} </h1>
+
+    <div class="shadow-lg p-3 mb-5 bg-body rounded">
+        <div class="row align-items">
+            <div class="col-md-2">
+                <img class="img-fluid" src="/media/{{ profile_picture }}">
+            </div>
+            <div class="col-md-10">
+
+                {% if user|is_in_group:"Customers" %}
+                    <li><strong>First Name:</strong> {{ user.first_name }}</li>
+                    <li><strong>Last Name: </strong> {{ user.last_name }}</li>
+                    <br>
+                    <li><strong>Email: </strong> {{ user.email }}</li>
+                    <li><strong>Amount of Bookings: </strong> {{ user.customer.amount_of_bookings }}</li>
+
+                    {% if user.profile.date_of_birth %}
+                        <li><strong>Date of Birth: </strong> {{ user.profile.date_of_birth }}</li>
+                        <li><strong>Age: </strong> {{ user.profile.calculate_user_age }} years old</li>
+                    {% else %}
+                        <br>
+                        {% if is_own_profile %}
+                            <p><strong>Press 'Edit Profile' and finish adding in your 'Date of Birth' and 'About Me' to complete your profile!</strong></p>
+                        {% endif %}
+                    {% endif %}
+
+                    {% if is_own_profile %}
+                        <a href="{% url 'view_invoices' user.id %}" class="btn btn-primary">View Current Invoices</a>
+                    {% endif %}
+
+                {% elif user|is_in_group:"Airlines" %}
+                    <li><strong>Company Name: </strong> {{ user.first_name }}</li>
+                    <li><strong>Contact Email:</strong> {{ user.email }}</li>
+                    <br>
+                    <li><strong>Total amount of bookings: </strong> {{ user.airline.amount_of_bookings }}</li>
+                {% endif %}
+
+                {% if is_own_profile %}
+                    <a style="color: blue; text-align:right" href="{% url 'edit_user_profile' %}" class="btn btn-tertiary">Edit Profile</a>
+                    {% if user|is_in_group:"Airlines" %}
+                        <a style="color: blue; text-align:right" href="{% url 'create_ticket_descriptions' %}" class="btn btn-tertiary">Edit Ticket Descriptions</a>
+                    {% endif %}
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+    {% if user.profile.about_me %}
+        <div class="shadow-lg p-3 mb-5 bg-body rounded">
+            <h3><strong> About Me: </strong></h3>
+            {{ user.profile.about_me }}
+        </div>
+    {% endif %}
+
+    {% if last_three_bookings %}
+        <div class="shadow-lg p-3 mb-5 bg-body rounded">
+            <h3><strong>Recent Bookings:</strong></h3>
+            {% for booking in last_three_bookings %}
+                <br>
+                <div class="card">
+                    <div class="card-header">
+                        <strong> <h2>{{ booking.userCreatorID }}</h2> </strong>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">Flight from <strong>{{ booking.start_location_id }}</strong> to <strong>{{ booking.end_location_id }}</strong></h5>
+                        <p class="card-text">
+                            <li> Estimated Distance: {{ booking.calc_distance|floatformat:2 }} km </li>
+                            <li> Price of Booking an <strong>Economy Class Ticket</strong>: £{{ booking.economy_price }} </li>
+                            <li> Price of Booking a <strong>Business Class Ticket</strong>: £{{ booking.business_price }} </li>
+                        </p>
+                        <a href="{% url 'booking_details' booking.bookingID %}" class="btn btn-primary">Learn More</a>
+                    </div>
+                    <div class="card-footer text-body-secondary">
+                        Flight Date & Time: {{ booking.booking_date }}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if user|is_in_group:"Airlines" %}
+        <div class="shadow p-4 mb-5 bg-body rounded">
+            <h3>Ticket descriptions for airline <strong>{{ booking.userCreatorID.user.first_name }}</strong>:</h3>
+            <div class="card-group">
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Economy Class Tickets</h5>
+                        <p class="card-text">{{ user.airline.economy_description }}</p>
+                    </div>
+                </div>
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Economy Plus Class Tickets</h5>
+                        <p class="card-text">{{ user.airline.economy_plus_description }}</p>
+                    </div>
+                </div>
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">Business Class Tickets</h5>
+                        <p class="card-text">{{ user.airline.business_description }}</p>
+                    </div>
+                </div>
+                <div class="card border-primary">
+                    <div class="card-body">
+                        <h5 class="card-title">First Class Tickets</h5>
+                        <p class="card-text">{{ user.airline.first_class_description }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+{% else %}
+    <p style="text-align:center">
+        <strong>You do not have an account! Please go and
+        <a href="{% url 'register_now' %}">register</a> or
+        <a href="{% url 'login' %}">login if you already have an account</a></strong>
+    </p>
+{% endif %}
+
+{% endblock %}

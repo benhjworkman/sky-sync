@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+
+{% if user.is_authenticated %}
+
+    {% if user|is_in_group:"Airlines" %}
+
+        <h2 style="text-align: center"> <strong>Bookings of user {{ user.username }} </strong></h2>
+        <br>
+        <p> The following are all the bookings that are currently live on the site from your company. If you would like to edit the details of a booking please press the yellow 'edit' button on the booking that you would like to edit. If you would like to see more details about the booking, please press the blue 'learn more' button on that booking.</p>
+
+        <p> If there is a booking that is there by error, or a booking that you did not create, please create a ticket and contact an admin.</p>
+
+<hr>
+<br><br>
+    {% for booking in all_user_bookings %}
+
+<div class="card">
+  <div class="card-header">
+      <strong> <h2>{{ booking.userCreatorID }}</h2> </strong>
+  </div>
+  <div class="card-body">
+      <h5 class="card-title">Flight from <strong>{{ booking.start_location_id }}</strong> to <strong>{{ booking.end_location_id }}</strong></h5>
+    <p class="card-text">
+        <li> Estimated Distance: {{ booking.calc_distance|floatformat:2 }} km </li>
+        <li> Price of Booking an <strong>Economy Class Ticket</strong>: £{{ booking.economy_price }} </li>
+        <li> Price of Booking a <strong>Business Class Ticket</strong>: £{{ booking.business_price }} </li>
+    </p>
+    <a href="{% url 'booking_details' booking.bookingID %}" class="btn btn-primary">Booking Details</a>
+    <a href="{% url 'edit_booking' booking.bookingID %}" class="btn btn-warning">Edit this Booking</a>
+    <a href="{% url 'view_booking_customers' booking.bookingID %}" class="btn btn-info">See Booking Customers</a>
+    <a href="{% url 'delete_booking' booking.bookingID %}" class="btn btn-danger">DELETE BOOKING</a>
+  </div>
+  <div class="card-footer text-body-secondary">
+    Flight Date & Time: {{ booking.booking_date }}
+  </div>
+</div>
+<br></br>
+
+    {% endfor %}
+    {% endif %}
+
+{% else %}
+    <p style="text-align:center"><strong>You do not have an account! Please go and <a href="{% url 'register_now' %}">register</a> or <a href="{% url 'login' %}"> login if you already have an account</a></strong></p>
+
+    {% endif %}
+{% endblock %}

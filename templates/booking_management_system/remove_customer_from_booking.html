@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+
+<div class="container mt-5">
+    <h2>Remove Customer</h2>
+    <p class="text-danger">Warning: This action cannot be undone.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="{{ form.reason_for_removal.id_for_label }}" class="form-label">Reason for Removal</label>
+            {{ form.reason_for_removal }}
+        </div>
+
+        <div class="mb-3">
+            <label for="{{ form.additional_notes.id_for_label }}" class="form-label">Additional Notes (Optional)</label>
+            {{ form.further_removal_description }}
+        </div>
+
+        <button type="submit" class="btn btn-danger" onclick="return confirmBooking();">Remove Customer</button>
+{#        <a href="{% url 'booking/view_booking_customers' booking.bookingID %}" class="btn btn-secondary">Cancel</a>#}
+    </form>
+</div>
+{% endblock %}
+

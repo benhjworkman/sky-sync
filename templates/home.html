@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="shadow-lg p-3 mb-5 bg-body rounded">
+<div class="container mt-5 text-center">
+    <h1 class="display-4">Welcome to SkySync</h1>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Custom Profiles</h5>
+                    <p class="card-text">View your invoices, recent bookings, and manage your profile easily.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Search & Filter Bookings</h5>
+                    <p class="card-text">Find flights by date, departure, and destination.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Support Tickets</h5>
+                    <p class="card-text">Need help? Create a ticket and contact our admins.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4">
+        <a href="{% url 'view_bookings' %}" class="btn btn-primary">View Bookings</a>
+        <a href="{% url 'submit_a_ticket' %}" class="btn btn-danger">Contact Support</a>
+        {% if user.is_authenticated %}
+        <a href="{% url 'user_profile' user.id %}" class="btn btn-secondary">Go to Profile</a>
+        {% else %}
+            <br>
+            <br>
+            <p> <strong> You do not have an account! </strong></p>
+                <p style="text-align:center"> If you would like to start using our bookings system, please go to the login page via the navbar in the top right of the page</p>
+        {% endif %}
+    </div>
+</div>
+<br>
+<br>
+<br>
+</div>
+{% endblock %}

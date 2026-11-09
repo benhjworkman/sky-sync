@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+{% if user.is_authenticated %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Filter Bookings</h2>
+
+    <form method="GET" action="{% url 'view_bookings' %}" class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label">Start Date</label>
+            <input type="date" name="start_date" class="form-control" value="{{ request.GET.start_date }}">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Start Location</label>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
+                    {% if selected_start_location %}
+                        {{ selected_start_location.location_name }}
+                    {% else %}
+                        Select Start Location
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu w-100">
+                    {% for location in form.start_location.field.queryset %}
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="selectLocation('{{ location.id }}', '{{ location.location_name }}', 'start_location', 'start_location_button')">
+                                {{ location.location_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <input type="hidden" name="start_location" id="start_location" value="{{ request.GET.start_location }}">
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">End Location</label>
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown">
+                    {% if selected_end_location %}
+                        {{ selected_end_location.location_name }}
+                    {% else %}
+                        Select End Location
+                    {% endif %}
+                </button>
+                <ul class="dropdown-menu w-100">
+                    {% for location in form.end_location.field.queryset %}
+                        <li>
+                            <a class="dropdown-item" href="#" onclick="selectLocation('{{ location.id }}', '{{ location.location_name }}', 'end_location', 'end_location_button')">
+                                {{ location.location_name }}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <input type="hidden" name="end_location" id="end_location" value="{{ request.GET.end_location }}">
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Minimum Price</label>
+            <input type="number" step="0.01" name="min_price" class="form-control" value="{{ request.GET.min_price }}" placeholder="Min Price">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Maximum Price</label>
+            <input type="number" step="0.01" name="max_price" class="form-control" value="{{ request.GET.max_price }}" placeholder="Max Price">
+        </div>
+
+        <div class="col-md-4">
+            <label class="form-label">Disabled-Friendly</label>
+            <input type="checkbox" name="is_disabled_friendly" class="form-check-input" {% if request.GET.disabled_friendly %}checked{% endif %}>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
+    </form>
+
+    <br><br>
+    <hr>
+
+    {% for booking in all_bookings %}
+    <div class="card">
+        <div class="card-header">
+            <h2><strong>{{ booking.userCreatorID }}</strong></h2>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Flight from <strong>{{ booking.start_location_id.location_name }}</strong> to <strong>{{ booking.end_location_id.location_name }}</strong></h5>
+            <p class="card-text">
+                <li> Estimated Distance: {{ booking.calc_distance|floatformat:2 }} km </li>
+                <li> Price of Booking an <strong>Economy Class Ticket</strong>: £{{ booking.economy_price }} </li>
+                <li> Price of Booking a <strong>Business Class Ticket</strong>: £{{ booking.business_price }} </li>
+            </p>
+            <a href="{% url 'booking_details' booking.bookingID %}" class="btn btn-primary">Learn More</a>
+        </div>
+        <div class="card-footer text-body-secondary">
+            Flight Date & Time: {{ booking.booking_date }}
+        </div>
+    </div>
+    <br>
+    {% endfor %}
+</div>
+
+<script>
+    function selectLocation(id, name, inputId, buttonId) {
+        document.getElementById(inputId).value = id;
+        document.getElementById(buttonId).innerText = name;
+    }
+</script>
+
+{% else %}
+    <p style="text-align:center"><strong>You do not have an account! Please go and <a href="{% url 'register_now' %}">register</a> or <a href="{% url 'login' %}">login if you already have an account</a></strong></p>
+{% endif %}
+
+{% endblock %}

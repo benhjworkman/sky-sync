@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+
+{% if user.is_authenticated and user|is_in_group:"Customers" %}
+
+<div class="container mt-4">
+    <h2 class="mb-4">Filter Invoices</h2>
+
+    <form method="GET" action="{% url 'view_invoices' user.id %}" class="row g-3">
+        <div class="col-md-6">
+            <label class="form-label">Filter Unpaid Invoices</label>
+            <div class="form-check">
+                <input type="checkbox" name="filter_paid" class="form-check-input" id="filter_paid"
+                       {% if request.GET.filter_paid %}checked{% endif %}>
+                <label class="form-check-label" for="filter_paid">Show Unpaid Invoices</label>
+            </div>
+        </div>
+
+        <div class="col-md-6">
+            <label class="form-label">Filter Current Active Bookings</label>
+            <div class="form-check">
+                <input type="checkbox" name="filter_outstanding_bookings" class="form-check-input" id="filter_outstanding_bookings"
+                       {% if request.GET.filter_outstanding_bookings %}checked{% endif %}>
+                <label class="form-check-label" for="filter_outstanding_bookings">Show Currently Active Bookings</label>
+            </div>
+        </div>
+
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Apply Filters</button>
+        </div>
+    </form>
+
+    <br><br><hr>
+
+    {% for invoice in all_user_invoices %}
+        <div class="card">
+            <div class="card-header">
+                <strong>Related Booking: {{ invoice.bookingID }}</strong>
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">Related Airline {{ invoice.bookingID.userCreatorID }}</h5>
+                <p class="card-text">
+                    <strong>Total Cost:</strong> £{{ invoice.total_price }}<br>
+                    <strong>Paid Status:</strong> {{ invoice.has_paid }}<br>
+                    <strong>Economy Seats Amount:</strong> {{ invoice.economy_seats_booked }}<br>
+                    <strong>Economy Plus Seats Amount:</strong> {{ invoice.economy_plus_seats_booked }}<br>
+                    <strong>Business Seats Amount:</strong> {{ invoice.business_seats_booked }}<br>
+                    <strong>First Class Seats Amount:</strong> {{ invoice.first_class_seats_booked }}<br>
+                    <strong>Total Seats Amount:</strong> {{ invoice.total_seats_booked }}<br>
+                </p>
+            </div>
+        </div>
+        <br>
+    {% endfor %}
+
+</div>
+
+{% else %}
+    <p style="text-align:center"><strong>You do not have permission to view this page.</strong></p>
+{% endif %}
+
+{% endblock %}

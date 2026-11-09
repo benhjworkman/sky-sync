@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load custom_tags %}
+{% block content %}
+
+
+
+{% if user.is_authenticated %}
+
+    <br>
+    <div class="shadow p-4 mb-5 bg-body rounded">
+    <div class="card mb-3">
+  <div class="card-body">
+    <h2 style="text-align: center">Booking Details</h2>
+  <br>
+  <hr>
+  <h5 class="card-title">Flight from <strong>{{ booking.start_location_id }}</strong> to <strong>{{ booking.end_location_id }}</strong></h5>
+    <p class="card-text">
+        <li>Estimated Distance: {{ booking.calc_distance|floatformat:2 }} km</li>
+        <li>Estimated Flight Time: {{ booking.calc_flight_time|floatformat:0 }} minutes / {{ flight_time_hours|floatformat:1 }} hours</li>
+        <br>
+        <li> Price of Booking an <strong>Economy Class Ticket</strong>: £{{ booking.economy_price }} </li>
+        <li> Price of Booking a <strong>Economy Plus Class Ticket</strong>: £{{ booking.economy_plus_price }} </li>
+        <li> Price of Booking a <strong>Business Class Ticket</strong>: £{{ booking.business_price }} </li>
+        <li> Price of Booking a <strong>First Class Ticket</strong>: £{{ booking.first_class_price }} </li>
+        <br>
+        <li>Flight Date & Time: {{ booking.booking_date }}</li>
+        <li>Disabled Friendly: {{ booking.disabled_friendly|yesno:"Yes,No" }}</li>
+        <li>Created On: {{ booking.dateCreation }}</li>
+    </p>
+      <script src="{% static 'scripts.js' %}"></script>
+
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          {% if user|is_in_group:"Customers" %}
+          <a class="btn btn-success" href="{% url 'book_flight_seats' booking.bookingID %}"> Book onto this flight</a>
+{#             {# onclick="return confirmBooking();#}
+          {% else %}
+          <a class="btn btn-success disabled" href="#"  aria-disabled="True" > Book onto this flight</a>
+          {% endif %}
+              <p>                     </p>
+
+          <a href="{% url 'view_bookings' %}" class="btn btn-danger">Back to All Bookings</a>
+      </ul>
+    <p class="card-text"><small class="text-body-secondary">Date and Time of Flight: {{ booking.booking_date }}</small></p>
+  </div>
+</div>
+    </div>
+
+        <div class="shadow p-4 mb-5 bg-body rounded">
+<h3>Ticket descriptions for airline <strong>{{ booking.userCreatorID.user.first_name }}</strong>:</h3>
+        <div class="card-group">
+  <div class="card border-primary">
+    <div class="card-body">
+      <h5 class="card-title">Economy Class Tickets</h5>
+        <p class="card-text">{{ booking.userCreatorID.economy_description }} </p>
+    </div>
+  </div>
+  <div class="card border-primary">
+    <div class="card-body">
+      <h5 class="card-title">Economy Plus Class Tickets</h5>
+      <p class="card-text">{{ booking.userCreatorID.economy_plus_description }}</p>
+    </div>
+  </div>
+  <div class="card border-primary">
+    <div class="card-body">
+      <h5 class="card-title">Business Class Tickets</h5>
+        <p class="card-text">{{ booking.userCreatorID.business_description }} </p>
+    </div>
+  </div>
+  <div class="card border-primary">
+    <div class="card-body ">
+      <h5 class="card-title">First Class Tickets</h5>
+      <p class="card-text"> {{ booking.userCreatorID.first_class_description }}</p>
+    </div>
+  </div>
+</div>
+
+        </div>
+
+        {% if not user|is_in_group:"Customers" %}
+        <p class="text-muted" style="text-align: center">You do not have the correct account type to book flights. If you think this is in error, please contact an admin through the ticket system.</p>
+
+    {% endif %}
+
+{% else %}
+    <p style="text-align:center"><strong>You do not have an account! Please go and <a href="{% url 'register_now' %}">register</a> or <a href="{% url 'login' %}">login if you already have an  account</a></strong></p>
+
+    {% endif %}
+
+{% endblock %}
+

@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+
+{% if user.is_authenticated %}
+
+    {% if form.errors %}
+    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+        <p>There was an error with your form!</p>
+        <ul>
+            {% for field in form %}
+                {% if field.errors %}
+                    <li>
+                        <strong>{{ field.label }}:</strong>
+                        <ul>
+                            {% for error in field.errors %}
+                                <li>{{ error }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    {% endif %}
+
+
+        <head>
+</head>
+<div class="shadow p-4 mb-5 bg-body rounded">
+    <h3>Edit ticket descriptions for user <strong>{{ user.first_name }}</strong>:</h3>
+    <br/>
+    <p>Please enter below the descriptions for each of your ticket stages. Please mention aspects, included but not limited to:</p>
+        <li>Baggage Allowance</li>
+        <li>Boarding benefits</li>
+        <li>Onboard meals</li>
+        <li>Seat Type</li>
+        <li>Any other benefits</li>
+
+<hr>
+
+    <br>
+    <form method="POST" action="{% url 'create_ticket_descriptions' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+<div class="mb-3">
+    <label class="form-label"><strong>Economy:</strong></label>
+    <br>
+    {{ form.economy_description }}
+</div>
+
+<br>
+<div class="mb-3">
+    <label class="form-label"><strong>Economy Plus:</strong></label>
+    <br>
+    {{ form.economy_plus_description }}
+</div>
+
+<div class="mb-3">
+    <label class="form-label"><strong>Business:</strong></label>
+    <br>
+    {{ form.business_description }}
+</div>
+
+<div class="mb-3">
+    <label class="form-label"><strong>First Class:</strong></label>
+    <br>
+    {{ form.first_class_description }}
+</div>
+
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</div>
+{% else %}
+
+<p style="text-align:center"><strong>You do not have an account! Please go and <a href="{% url 'register_now' %}">register</a> or <a href="{% url 'login' %}">login if you already have an account</a></strong></p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block content %}
+    {%  if not user.is_authenticated %}
+        <br>
+        <br>
+        <br>
+        <center>
+    <p><strong>Register an account today!</strong> Select below your account type:</p>
+
+
+    <div>
+        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="window.location.href='{% url 'register_customer' %}'">Register as a Customer</button>
+        <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="window.location.href='{%  url 'register_airline' %}'">Register as an Airline</button>
+    </div>
+
+    {% else %}
+    <p><strong>You are already logged in as {user}! Press below to be redirected to the home page: </strong></p>
+    <button type="button" class="btn btn-primary btn-lg btn-block" onclick="window.location.href='{% url 'home' %}'"></button>
+        </center>
+    {%  endif %}
+{% endblock %}
+

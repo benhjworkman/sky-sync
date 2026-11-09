@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+
+    <h2 style="text-align: center"> Customers for booking </h2>
+        <h3 style="text-align: center"> <strong> {{ booking.start_location_id.location_name }}</strong> to <strong>{{ booking.end_location_id.location_name }}</strong> </h3>
+<p> Below are all of the customers for the booking above, if you would like to remove a customer, please click the delete button, if you would like to learn more about the customer, please click the hyperlink beside their name.</p>
+    <hr>
+    <br>
+
+    <table class="table table-hover">
+  <thead>
+    <tr>
+      <th scope="col">User ID</th>
+      <th scope="col">First Name</th>
+      <th scope="col">Last Name</th>
+      <th scope="col">Age</th>
+      <th scope="col">No. of Bookings</th>
+      <th scope="col">View Customer Profile</th>
+      <th scope="col">Delete Customer</th>
+      <th scope="col">Set Customer As Paid</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for customers in all_customers %}
+    <tr class="clickable-row" data-href="{% url 'user_profile' customers.user_id %}">
+        <th scope="row">{{ customers.user_id }}</th>
+        <td>{{ customers.user.first_name }}</td>
+        <td>{{ customers.user.last_name }}</td>
+        <td>{{ customers.user.profile.calculate_user_age }}</td>
+        <td>{{ customers.amount_of_bookings }}</td>
+        <td><a href="{% url 'user_profile' customers.user.id %}" class="btn btn-info">See User Profile</td>
+        <td><a href="{% url 'remove_customer' booking.bookingID customers.user_id %}" class="btn btn-danger">Remove Customer</a></td>
+        <td><a href="{% url 'set_customer_as_paid' booking.bookingID customers.user.id %}" class="btn btn-primary">Set Customer As Paid</a></td>
+    </tr>
+    {% endfor %}
+
+
+
+
+{% endblock %}

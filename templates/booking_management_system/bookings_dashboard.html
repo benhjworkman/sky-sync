@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% load custom_tags %}
+{% block content %}
+{% if user.is_authenticated %}
+    {% if user|is_in_group:"Airlines" %}
+<div class="shadow p-4 mb-5 bg-body rounded">
+        <center>
+<div>
+    <h2><strong>Create A Booking!</strong> </h2>
+    <p>Select "Create a booking" below to create a booking, or select another button to register data to use in your booking. If you would like to view the current bookings that you have created, click the "View Bookings" button.</p>
+
+
+    <br>
+        <button type="button" class="btn btn-success btn-lg btn-block" onclick="window.location.href='{%  url 'create_bookings' %}'">Create A Booking</button>
+        <button type="button" class="btn btn-primary btn-lg btn-block" onclick="window.location.href='{%  url 'view_your_bookings' %}'">View Your Bookings </button>
+    <br></br>
+        <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="window.location.href='{%  url 'create_planes' %}'">Register A Plane</button>
+        <button type="button" class="btn btn-secondary btn-lg btn-block" onclick="window.location.href='{%  url 'create_locations' %}'">Register A location</button>
+</div>
+        </center>
+{#  BUTTON HREF: onclick="window.location.href='{%  url 'register_airline' %}'"  #}
+</div>
+
+
+{% else %}
+    <p style="text-align:center"> <strong> You do not have access to this page. </strong></p>
+{% endif %}
+{% else %}
+    <p style="text-align:center"><strong>You do not have an account! Please go and <a href="{% url 'register_now' %}">register</a> or <a href="{% url 'login' %}">login if you already have an  account</a></strong></p>
+{% endif %}
+{% endblock %}

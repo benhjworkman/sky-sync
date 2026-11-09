@@ -1,0 +1,84 @@
+{% load custom_tags %}
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'home' %}"> ✈ SkySync</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        <li class="nav-item active">
+          <a class="nav-link" href="{% url 'home' %}">Home <span class="visually-hidden">(current)</span></a>
+        </li>
+
+        {% if user.is_authenticated %}
+
+          {% if user|is_in_group:"Customers" %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'view_bookings' %}">Discover Bookings <span class="visually-hidden">(current)</span></a>
+            </li>
+          {% endif %}
+
+          {% if user|is_in_group:"Airlines" %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'view_bookings' %}"> Discover Bookings <span class="visually-hidden">(current)</span></a>
+            </li>
+
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'bookings_dashboard' %}">Bookings Dashboard <span class="visually-hidden">(current)</span></a>
+            </li>
+          {% endif %}
+
+          {% if user.is_superuser %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'view_tickets' %}">View Tickets <span class="visually-hidden">(current)</span></a>
+            </li>
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'admin:index' %}">Admin Page <span class="visually-hidden">(current)</span></a>
+            </li>
+          {% endif %}
+
+          {% if user|is_travi %}
+            <li class="nav-item active">
+              <a class="nav-link" href="{% url 'dagoodlookingone'%}">DAGOODLOOKINGONE <span class="visually-hidden">(current)</span></a>
+            </li>
+          {% endif %}
+
+        {% endif %}
+      </ul>
+
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+        {% if user.is_authenticated %}
+
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'submit_a_ticket' %}">Submit a Ticket <span class="visually-hidden">(current)</span></a>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'user_profile' user_id=request.user.id %}">Profile <span class="visually-hidden">(current)</span></a>
+          </li>
+
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'logout' %}">Logout <span class="visually-hidden">(current)</span></a>
+          </li>
+
+
+        {% else %}
+
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'login' %}">Login <span class="visually-hidden">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link" href="{% url 'register_now' %}">Register <span class="visually-hidden">(current)</span></a>
+          </li>
+
+
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
